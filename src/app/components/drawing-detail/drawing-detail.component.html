@@ -1,0 +1,9 @@
+<div *ngIf="drawing">
+          <h2>Drawing Detail</h2>
+          <p>Type: {{ drawing.type }}</p>
+          <p>Measurement: {{ drawing.measurement }}</p>
+          <div>
+            <button (click)="saveDrawing()">Save</button>
+          </div>
+        </div>
+        

@@ -1,0 +1,32 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.navbar-brand {
+  font-weight: bold;
+}
+
+.container {
+  margin-top: 20px;
+}
+
+#map-container {
+  height: 500px;
+}
+
+.map-controls {
+  display: flex;
+  align-items: center;
+}
+
+.map-controls label {
+  margin-right: 10px;
+}
+
+.map-controls select {
+  margin-right: 10px;
+}
+
+.map-controls button {
+  margin-left: 10px;
+}

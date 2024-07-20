@@ -1,0 +1,8 @@
+<div>
+  <h2>My Drawings</h2>
+  <div *ngFor="let drawing of drawings">
+    <p>{{ drawing.type }} - {{ drawing.measurement }}</p>
+    <button (click)="editDrawing(drawing.id)">Edit</button>
+    <button (click)="deleteDrawing(drawing.id)">Delete</button>
+  </div>
+</div>
