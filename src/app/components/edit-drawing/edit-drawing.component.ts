@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DrawingService } from '../../services/drawing.service';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../Auth Services/auth.service'; 
+import { AuthService } from '../../Auth Services/auth.service';
 
 @Component({
-  selector: 'app-drawing-detail',
-  templateUrl: './drawing-detail.component.html',
-  styleUrls: ['./drawing-detail.component.css']
+  selector: 'app-edit-drawing',
+  templateUrl: './edit-drawing.component.html',
+  styleUrls: ['./edit-drawing.component.css']
 })
-export class DrawingDetailComponent implements OnInit {
+export class EditDrawingComponent implements OnInit {
   drawing: any;
-  isAdmin: boolean = false; 
+  isAdmin: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -22,7 +22,7 @@ export class DrawingDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.isAdmin = this.authService.isAdmin(); // Kullanıcının admin olup olmadığını kontrol edin
+    this.isAdmin = this.authService.isAdmin();
 
     if (id) {
       this.drawingService.getDrawing(+id).subscribe(data => {
@@ -34,7 +34,7 @@ export class DrawingDetailComponent implements OnInit {
   }
 
   saveDrawing(): void {
-    if (this.isAdmin) { // Yalnızca admin olan kullanıcıların kaydetmesi
+    if (this.isAdmin) {
       if (this.drawing) {
         this.drawingService.saveDrawing(this.drawing).subscribe(
           (response: any) => {
@@ -50,7 +50,7 @@ export class DrawingDetailComponent implements OnInit {
         console.error('No drawing to save');
       }
     } else {
-      this.toastr.error('You do not have permission to save this drawing.');
+      this.toastr.error('You do not have permission to edit this drawing.');
     }
   }
 }

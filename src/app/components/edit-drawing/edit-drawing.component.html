@@ -1,7 +1,7 @@
 <div *ngIf="drawing" class="container mt-4">
   <div class="card">
     <div class="card-header">
-      <h2>Drawing Detail</h2>
+      <h2>Edit Drawing</h2>
     </div>
     <div class="card-body">
       <div class="mb-3">
@@ -9,14 +9,10 @@
         <input id="type" [(ngModel)]="drawing.type" class="form-control">
       </div>
       <div class="mb-3">
-        <label for="measurement" class="form-label">Measurement:</label>
-        <div class="measurement-container">
-          <p class="measurement">{{ drawing.measurement }}</p>
-        </div>
+        <label for="measurement" class="form-label">coordinate:</label>
+        <input id="measurement" [(ngModel)]="drawing.measurement" class="form-control measurement">
       </div>
-      <div class="text-center">
-        <button (click)="saveDrawing()" class="btn btn-primary" [disabled]="!isAdmin">Save</button>
-      </div>
+      <button (click)="saveDrawing()" class="btn btn-primary" [disabled]="!isAdmin">Save</button>
     </div>
   </div>
 </div>

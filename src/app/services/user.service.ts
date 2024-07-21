@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'http://localhost:3000'; // API ana URL'si
 
   constructor(private http: HttpClient) {}
 
@@ -14,7 +14,7 @@ export class UserService {
     return this.http.post(`${this.apiUrl}/register`, user);
   }
 
-  login(credentials: { username: string; password: string }): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, credentials);
+  login(credentials: { username: string; password: string }): Observable<{ token: string, role: string }> {
+    return this.http.post<{ token: string, role: string }>(`${this.apiUrl}/login`, credentials); // Burada '/login' eklenmeli
   }
 }

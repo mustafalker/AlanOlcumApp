@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { DrawingDetailComponent } from './components/drawing-detail/drawing-detail.component';
 import { DrawingListComponent } from './components/drawing-list/drawing-list.component';
 import { HttpClientModule, HTTP_INTERCEPTORS, provideHttpClient, withFetch } from '@angular/common/http';
-import { AuthInterceptor } from './auth.interceptor';
+import { AuthInterceptor } from './Auth Services/auth.interceptor';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -13,8 +13,11 @@ import { LoginComponent } from './components/login/login.component';
 import { MapComponent } from './components/map/map.component';
 import { AnaSayfaComponent } from './components/ana-sayfa/ana-sayfa.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from './Auth Services/auth.guard';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+import { EditDrawingComponent } from './components/edit-drawing/edit-drawing.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +27,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     LoginComponent,
     MapComponent,
     AnaSayfaComponent,
-    NavbarComponent
+    NavbarComponent,
+    EditDrawingComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +36,9 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     FormsModule,
     HttpClientModule,
     NgbModule,
-    RouterModule
+    RouterModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
   ],
   providers: [
     provideClientHydration(),

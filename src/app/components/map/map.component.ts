@@ -9,6 +9,8 @@ import { DrawingService } from '../../services/drawing.service';
 import { Polygon, LineString } from 'ol/geom';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
+import { ToastrService } from 'ngx-toastr';
+import { Feature } from 'ol';
 
 @Component({
   selector: 'app-map',
@@ -18,17 +20,24 @@ import VectorLayer from 'ol/layer/Vector';
 export class MapComponent implements AfterViewInit {
   map!: Map;
   type: 'Polygon' | 'LineString' = 'LineString';
+  vectorSource!: VectorSource;
+  vectorLayer!: VectorLayer<Feature>;
+  drawInteraction!: Draw;
   isBrowser: boolean;
 
-  constructor(private drawingService: DrawingService, @Inject(PLATFORM_ID) private platformId: any) {
+  constructor(
+    private drawingService: DrawingService,
+    @Inject(PLATFORM_ID) private platformId: any,
+    private toastr: ToastrService
+  ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
-      const vectorSource = new VectorSource();
-      const vectorLayer = new VectorLayer({
-        source: vectorSource,
+      this.vectorSource = new VectorSource();
+      this.vectorLayer = new VectorLayer<Feature>({
+        source: this.vectorSource,
       });
 
       this.map = new Map({
@@ -37,7 +46,7 @@ export class MapComponent implements AfterViewInit {
           new TileLayer({
             source: new OSM()
           }),
-          vectorLayer
+          this.vectorLayer
         ],
         view: new View({
           center: fromLonLat([37.41, 8.82]),
@@ -45,61 +54,48 @@ export class MapComponent implements AfterViewInit {
         })
       });
 
-      const draw = new Draw({
-        source: vectorSource,
-        type: this.type
-      });
-
-      this.map.addInteraction(draw);
-
-      draw.on('drawend', (event) => {
-        const feature = event.feature;
-        const geometry = feature.getGeometry();
-        if (geometry) {
-          const type = geometry.getType();
-          let coordinates: any;
-
-          if (geometry instanceof Polygon) {
-            coordinates = (geometry as Polygon).getCoordinates();
-          } else if (geometry instanceof LineString) {
-            coordinates = (geometry as LineString).getCoordinates();
-          }
-
-          if (coordinates) {
-            this.drawingService.createDrawing({ type, data: coordinates }).subscribe();
-          }
-        }
-      });
+      this.addDrawingInteraction();
     }
+  }
+
+  addDrawingInteraction() {
+    if (this.drawInteraction) {
+      this.map.removeInteraction(this.drawInteraction);
+    }
+
+    this.drawInteraction = new Draw({
+      source: this.vectorSource,
+      type: this.type,
+    });
+
+    this.map.addInteraction(this.drawInteraction);
+
+    this.drawInteraction.on('drawend', (event) => {
+      const feature = event.feature;
+      const geometry = feature.getGeometry();
+      if (geometry) {
+        const type = geometry.getType();
+        let coordinates: any;
+
+        if (geometry instanceof Polygon) {
+          coordinates = (geometry as Polygon).getCoordinates();
+        } else if (geometry instanceof LineString) {
+          coordinates = (geometry as LineString).getCoordinates();
+        }
+
+        if (coordinates) {
+          this.drawingService.createDrawing({ type, data: coordinates }).subscribe(() => {
+            this.toastr.success('Drawing added successfully!', 'Success');
+            window.location.reload();
+          });
+        }
+      }
+    });
   }
 
   addDrawing() {
     if (this.isBrowser) {
-      const draw = new Draw({
-        source: new VectorSource(),
-        type: this.type
-      });
-
-      this.map.addInteraction(draw);
-
-      draw.on('drawend', (event) => {
-        const feature = event.feature;
-        const geometry = feature.getGeometry();
-        if (geometry) {
-          const type = geometry.getType();
-          let coordinates: any;
-
-          if (geometry instanceof Polygon) {
-            coordinates = (geometry as Polygon).getCoordinates();
-          } else if (geometry instanceof LineString) {
-            coordinates = (geometry as LineString).getCoordinates();
-          }
-
-          if (coordinates) {
-            this.drawingService.createDrawing({ type, data: coordinates }).subscribe();
-          }
-        }
-      });
+      this.addDrawingInteraction();
     }
   }
 }

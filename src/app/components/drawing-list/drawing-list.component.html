@@ -1,8 +1,19 @@
-<div>
-  <h2>My Drawings</h2>
-  <div *ngFor="let drawing of drawings">
-    <p>{{ drawing.type }} - {{ drawing.measurement }}</p>
-    <button (click)="editDrawing(drawing.id)">Edit</button>
-    <button (click)="deleteDrawing(drawing.id)">Delete</button>
+<div class="container mt-4">
+  <h2 class="text-center mb-4">My Drawings</h2>
+  <p>
+    Rol: 
+    <span class="badge" [ngClass]="isAdmin ? 'badge-success' : 'badge-secondary'">
+      {{ isAdmin ? 'Admin' : 'Admin Değil' }}
+    </span>
+  </p>
+  <div *ngFor="let drawing of drawings" class="card mb-3 shadow-sm">
+    <div class="card-body">
+      <p class="card-text"><strong>Tür:</strong> {{ drawing.type }}</p>
+      <p class="card-text"><strong>Ölçü:</strong> {{ drawing.measurement }}</p>
+      <div class="d-flex justify-content-end">
+        <button [disabled]="!isAdmin" class="btn btn-primary btn-sm me-2" (click)="editDrawing(drawing.id)">Düzenle</button>
+        <button class="btn btn-danger btn-sm" (click)="deleteDrawing(drawing.id)">Sil</button>
+      </div>
+    </div>
   </div>
 </div>

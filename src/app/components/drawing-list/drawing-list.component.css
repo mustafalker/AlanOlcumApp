@@ -1,0 +1,33 @@
+.card {
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-text {
+  margin: 0.5rem 0;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn {
+  margin-left: 0.5rem;
+}
+.badge {
+  font-size: 0.75rem;
+  padding: 0.25em 0.4em;
+  font-weight: 600;
+}
+.badge-success {
+  background-color: #28a745;
+}
+.badge-secondary {
+  background-color: #6c757d;
+}
