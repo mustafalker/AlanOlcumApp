@@ -5,11 +5,11 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-
+  //HTTP isteklerine otomatik olarak kimlik doğrulama token'ı eklemek için kullanılan sayfa
   constructor(private authService: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.authService.getToken();
+    const token = this.authService.getToken(); //Authservice üzerinden tokenları alır.
 
     if (token) {
       req = req.clone({

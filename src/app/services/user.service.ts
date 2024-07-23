@@ -15,6 +15,6 @@ export class UserService {
   }
 
   login(credentials: { username: string; password: string }): Observable<{ token: string, role: string }> {
-    return this.http.post<{ token: string, role: string }>(`${this.apiUrl}/login`, credentials); // Burada '/login' eklenmeli
+    return this.http.post<{ token: string, role: string }>(`${this.apiUrl}/login`, credentials);
   }
 }

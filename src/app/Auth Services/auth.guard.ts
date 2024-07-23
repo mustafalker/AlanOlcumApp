@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
   private isBrowser(): boolean {
     return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
   }
-
+  // kullanıcının giriş yapıp yapmadığını kontrol etmek ve erişim izni vermek için gerekli metod
   canActivate(): boolean {
     if (this.isBrowser() && localStorage.getItem('token')) {
       return true;

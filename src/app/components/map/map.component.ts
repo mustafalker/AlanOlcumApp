@@ -1,101 +1,112 @@
-import { Component, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { Map, View } from 'ol';
-import { Tile as TileLayer } from 'ol/layer';
-import { OSM } from 'ol/source';
-import { fromLonLat } from 'ol/proj';
-import { Draw } from 'ol/interaction';
-import { DrawingService } from '../../services/drawing.service';
-import { Polygon, LineString } from 'ol/geom';
-import VectorSource from 'ol/source/Vector';
-import VectorLayer from 'ol/layer/Vector';
-import { ToastrService } from 'ngx-toastr';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import { OSM, Vector as VectorSource } from 'ol/source';
+import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
+import { Draw, Modify, Snap } from 'ol/interaction';
+import { Fill, Stroke, Style } from 'ol/style';
 import { Feature } from 'ol';
+import { LineString, Polygon } from 'ol/geom';
+import { fromLonLat } from 'ol/proj';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css'],
+  styleUrls: ['./map.component.css']
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements OnInit {
+  @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef;
+
   map!: Map;
-  type: 'Polygon' | 'LineString' = 'LineString';
   vectorSource!: VectorSource;
-  vectorLayer!: VectorLayer<Feature>;
+  vectorLayer!: VectorLayer<any>;
   drawInteraction!: Draw;
-  isBrowser: boolean;
+  modifyInteraction!: Modify;
+  snapInteraction!: Snap;
 
-  constructor(
-    private drawingService: DrawingService,
-    @Inject(PLATFORM_ID) private platformId: any,
-    private toastr: ToastrService
-  ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
+  ngOnInit() {
+    this.initializeMap();
   }
 
-  ngAfterViewInit(): void {
-    if (this.isBrowser) {
-      this.vectorSource = new VectorSource();
-      this.vectorLayer = new VectorLayer<Feature>({
-        source: this.vectorSource,
-      });
+  initializeMap() {
+    this.vectorSource = new VectorSource({ wrapX: false });
 
-      this.map = new Map({
-        target: 'map',
-        layers: [
-          new TileLayer({
-            source: new OSM()
-          }),
-          this.vectorLayer
-        ],
-        view: new View({
-          center: fromLonLat([37.41, 8.82]),
-          zoom: 4
-        })
-      });
+    this.vectorLayer = new VectorLayer<any>({
+      source: this.vectorSource,
+      style: new Style({
+        fill: new Fill({
+          color: 'rgba(255, 255, 255, 0.2)',
+        }),
+        stroke: new Stroke({
+          color: '#ffcc33',
+          width: 2,
+        }),
+      }),
+    });
 
-      this.addDrawingInteraction();
-    }
+    this.map = new Map({
+      target: this.mapContainer.nativeElement,
+      layers: [
+        new TileLayer({
+          source: new OSM(),
+        }),
+        this.vectorLayer,
+      ],
+      view: new View({
+        center: fromLonLat([0, 0]),
+        zoom: 2,
+      }),
+    });
+
+    this.addInteractions();
   }
 
-  addDrawingInteraction() {
-    if (this.drawInteraction) {
-      this.map.removeInteraction(this.drawInteraction);
-    }
-
+  addInteractions() {
     this.drawInteraction = new Draw({
       source: this.vectorSource,
-      type: this.type,
+      type: 'Polygon',
+    });
+
+    this.modifyInteraction = new Modify({
+      source: this.vectorSource,
+    });
+
+    this.snapInteraction = new Snap({
+      source: this.vectorSource,
     });
 
     this.map.addInteraction(this.drawInteraction);
-
-    this.drawInteraction.on('drawend', (event) => {
-      const feature = event.feature;
-      const geometry = feature.getGeometry();
-      if (geometry) {
-        const type = geometry.getType();
-        let coordinates: any;
-
-        if (geometry instanceof Polygon) {
-          coordinates = (geometry as Polygon).getCoordinates();
-        } else if (geometry instanceof LineString) {
-          coordinates = (geometry as LineString).getCoordinates();
-        }
-
-        if (coordinates) {
-          this.drawingService.createDrawing({ type, data: coordinates }).subscribe(() => {
-            this.toastr.success('Drawing added successfully!', 'Success');
-            window.location.reload();
-          });
-        }
-      }
-    });
+    this.map.addInteraction(this.modifyInteraction);
+    this.map.addInteraction(this.snapInteraction);
   }
 
-  addDrawing() {
-    if (this.isBrowser) {
-      this.addDrawingInteraction();
-    }
+  addPolygon() {
+    this.map.removeInteraction(this.drawInteraction);
+    this.drawInteraction = new Draw({
+      source: this.vectorSource,
+      type: 'Polygon',
+    });
+    this.map.addInteraction(this.drawInteraction);
+  }
+
+  addLineString() {
+    this.map.removeInteraction(this.drawInteraction);
+    this.drawInteraction = new Draw({
+      source: this.vectorSource,
+      type: 'LineString',
+    });
+    this.map.addInteraction(this.drawInteraction);
+  }
+
+  resetMap() {
+    this.vectorSource.clear();
+    this.map.getView().setCenter(fromLonLat([0, 0]));
+    this.map.getView().setZoom(2);
+  }
+
+  cancelDrawing() {
+    this.map.removeInteraction(this.drawInteraction);
+    // İptal edilen çizimi yeniden etkinleştirmek için etkileşimi tekrar ekleyin
+    this.map.addInteraction(this.drawInteraction);
   }
 }

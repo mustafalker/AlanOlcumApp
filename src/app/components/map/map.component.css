@@ -1,29 +1,29 @@
-/* map.component.css */
-.map {
-  height: 500px;
+.map-container {
+  position: relative;
   width: 100%;
+  height: 400px;
 }
 
-.map-controls {
+.controls {
+  position: absolute;
+  top: 10px;
+  left: 60px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   display: flex;
-  align-items: center;
+  flex-direction: row; /* Butonları yan yana koyar */
+  z-index: 1000;
 }
 
-.map-controls label {
-  margin-right: 10px;
+.controls button {
+  margin-right: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.map-controls select {
-  margin-right: 10px;
-}
-
-.map-controls button {
-  margin-left: 10px;
-}
-
-.card-header {
-  font-weight: bold;
-}
-.toast-success {
-  background-color: #28a745; 
+.controls button i {
+  font-size: 20px;
 }
