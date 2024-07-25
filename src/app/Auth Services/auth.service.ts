@@ -5,8 +5,6 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  //kullanıcının giriş yapıp yapmadığını kontrol etmek, kullanıcı 
-  //rolünü yönetmek ve kullanıcı ile ilgili bilgileri saklamak için kullanılır
   private loggedIn = new BehaviorSubject<boolean>(this.getToken() !== '');
   private role = new BehaviorSubject<string>(this.getRole());
 

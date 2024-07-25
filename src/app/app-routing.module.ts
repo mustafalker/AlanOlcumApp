@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DrawingDetailComponent } from './components/drawing-detail/drawing-detail.component';
 import { DrawingListComponent } from './components/drawing-list/drawing-list.component';
 import { LoginComponent } from './components/login/login.component';
 import { MapComponent } from './components/map/map.component';
@@ -16,7 +15,6 @@ const routes: Routes = [
   { path: 'drawings', component: DrawingListComponent, canActivate: [AuthGuard] },
   { path: 'edit-drawing/:id', component: EditDrawingComponent, canActivate: [AuthGuard] },
   { path: 'map', component: MapComponent, canActivate: [AuthGuard] },
-  // { path: 'ana-sayfa', component: AnaSayfaComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }
 ];  

@@ -4,5 +4,6 @@
     <button (click)="addLineString()" title="Add LineString"><i class="fas fa-pencil-alt"></i></button>
     <button (click)="resetMap()" title="Reset Map"><i class="fas fa-sync-alt"></i></button>
     <button (click)="cancelDrawing()" title="Cancel Drawing"><i class="fas fa-times"></i></button>
+    <button *ngIf="isSaveButtonVisible" (click)="saveChanges()" title="Save Changes"><i class="fas fa-save"></i></button>
   </div>
 </div>

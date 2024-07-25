@@ -2,7 +2,6 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DrawingDetailComponent } from './components/drawing-detail/drawing-detail.component';
 import { DrawingListComponent } from './components/drawing-list/drawing-list.component';
 import { HttpClientModule, HTTP_INTERCEPTORS, provideHttpClient, withFetch } from '@angular/common/http';
 import { AuthInterceptor } from './Auth Services/auth.interceptor';
@@ -22,7 +21,6 @@ import { EditDrawingComponent } from './components/edit-drawing/edit-drawing.com
 @NgModule({
   declarations: [
     AppComponent,
-    DrawingDetailComponent,
     DrawingListComponent,
     LoginComponent,
     MapComponent,

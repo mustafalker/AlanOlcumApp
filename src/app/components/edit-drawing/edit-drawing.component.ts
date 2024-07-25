@@ -35,8 +35,8 @@ export class EditDrawingComponent implements OnInit {
 
   saveDrawing(): void {
     if (this.isAdmin) {
-      if (this.drawing) {
-        this.drawingService.saveDrawing(this.drawing).subscribe(
+      if (this.drawing && this.drawing.id) {
+        this.drawingService.saveDrawing(this.drawing.id, this.drawing).subscribe(
           (response: any) => {
             console.log('Drawing saved:', response);
             this.toastr.success('Drawing saved successfully.');

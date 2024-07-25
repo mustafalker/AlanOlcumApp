@@ -9,8 +9,8 @@
         <input id="type" [(ngModel)]="drawing.type" class="form-control">
       </div>
       <div class="mb-3">
-        <label for="measurement" class="form-label">coordinate:</label>
-        <input id="measurement" [(ngModel)]="drawing.measurement" class="form-control measurement">
+        <label for="measurement" class="form-label">Coordinates:</label>
+        <input id="measurement" [(ngModel)]="drawing.coordinates" class="form-control measurement">
       </div>
       <button (click)="saveDrawing()" class="btn btn-primary" [disabled]="!isAdmin">Save</button>
     </div>
