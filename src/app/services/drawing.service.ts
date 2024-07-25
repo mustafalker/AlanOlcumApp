@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DrawingService {
-  private apiUrl = 'http://localhost:3000/drawings';
+  private apiUrl = 'http://localhost:3000/drawings'; // Backend URL
 
   constructor(private http: HttpClient) {}
 
@@ -23,7 +23,7 @@ export class DrawingService {
   }
 
   createDrawing(drawing: any): Observable<any> {
-    console.log('Creating drawing:', drawing); // Log before sending to backend
+    console.log('Creating drawing:', drawing);
     return this.http.post(this.apiUrl, drawing, this.getHttpOptions());
   }
 

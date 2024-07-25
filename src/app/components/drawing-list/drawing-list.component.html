@@ -6,14 +6,30 @@
       {{ isAdmin ? 'Admin' : 'Admin Değil' }}
     </span>
   </p>
-  <div *ngFor="let drawing of drawings" class="card mb-3 shadow-sm">
-    <div class="card-body">
-      <p class="card-text"><strong>Tür:</strong> {{ drawing.type }}</p>
-      <p class="card-text"><strong>Ölçü:</strong> {{ drawing.measurement }}</p>
-      <div class="d-flex justify-content-end">
-        <button [disabled]="!isAdmin" class="btn btn-primary btn-sm me-2" (click)="editDrawing(drawing.id)">Düzenle</button>
-        <button class="btn btn-danger btn-sm" (click)="deleteDrawing(drawing.id)">Sil</button>
-      </div>
-    </div>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Tür</th>
+          <th scope="col">Ölçü</th>
+          <th scope="col">Çizen Kişi</th>
+          <th scope="col">Eklenme Zamanı</th>
+          <th scope="col">İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let drawing of drawings">
+          <td>{{ drawing.type }}</td>
+          <td>{{ drawing.measurement }}</td>
+          <td>{{ drawing.username }}</td>
+          <td>{{ drawing.createdAt | date:'medium' }}</td>
+          <td>
+            <button [disabled]="!isAdmin" class="btn btn-danger btn-sm" (click)="deleteDrawing(drawing.id)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

@@ -5,5 +5,6 @@
     <button (click)="resetMap()" title="Reset Map"><i class="fas fa-sync-alt"></i></button>
     <button (click)="cancelDrawing()" title="Cancel Drawing"><i class="fas fa-times"></i></button>
     <button *ngIf="isSaveButtonVisible" (click)="saveChanges()" title="Save Changes"><i class="fas fa-save"></i></button>
+    <button *ngIf="isCancelButtonVisible" (click)="undoChanges()" title="Undo Changes"><i class="fas fa-undo-alt"></i></button>
   </div>
 </div>

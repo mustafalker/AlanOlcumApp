@@ -6,12 +6,13 @@ import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
 import { Draw, Modify, Snap } from 'ol/interaction';
 import { Fill, Stroke, Style } from 'ol/style';
 import { Feature } from 'ol';
-import { LineString, Polygon } from 'ol/geom';
+import { LineString, Polygon, Geometry } from 'ol/geom'; // Geometry eklendi
 import { fromLonLat } from 'ol/proj';
 import { DrawingService } from '../../services/drawing.service';
 import { AuthService } from '../../Auth Services/auth.service';
 
 interface Drawing {
+  id?: number;
   coordinates: number[][] | number[][][];
   type: 'Polygon' | 'LineString';
 }
@@ -32,9 +33,12 @@ export class MapComponent implements OnInit {
   snapInteraction!: Snap;
   isAdmin: boolean = false;
   modificationPending: boolean = false;
-  isSaveButtonVisible: boolean = false; 
+  isSaveButtonVisible: boolean = false;
+  isCancelButtonVisible: boolean = false; // Yeni iptal butonu durumu
 
-  constructor(private drawingService: DrawingService, private authService: AuthService) {}
+  originalCoordinates: number[][] | number[][][] | null = null; // Orijinal koordinatlar
+
+  constructor(private drawingService: DrawingService, private authService: AuthService) { }
 
   ngOnInit() {
     this.isAdmin = this.authService.isAdmin();
@@ -98,10 +102,24 @@ export class MapComponent implements OnInit {
       this.saveDrawing(feature);
     });
 
+    this.modifyInteraction.on('modifystart', (event) => {
+      const features = event.features.getArray();
+      if (features.length > 0) {
+        const feature = features[0];
+        const geometry = feature.getGeometry();
+        if (geometry) {
+          if (geometry instanceof Polygon || geometry instanceof LineString) {
+            this.originalCoordinates = geometry.getCoordinates();
+          }
+          this.isCancelButtonVisible = true;
+        }
+      }
+    });
+
     this.modifyInteraction.on('modifyend', (event) => {
       const features = event.features.getArray();
       this.modificationPending = true;
-      this.isSaveButtonVisible = true; // Save button görünür yapma işlemi
+      this.isSaveButtonVisible = true;
       features.forEach(feature => {
         feature.set('modified', true);
       });
@@ -122,13 +140,16 @@ export class MapComponent implements OnInit {
 
   addDrawingsToMap(drawings: Drawing[]) {
     drawings.forEach(drawing => {
-      let geometry;
+      let geometry: Geometry;
       if (drawing.type === 'Polygon') {
         geometry = new Polygon(drawing.coordinates as number[][][]);
       } else if (drawing.type === 'LineString') {
         geometry = new LineString(drawing.coordinates as number[][]);
+      } else {
+        return;
       }
       const feature = new Feature({ geometry });
+      feature.setId(drawing.id); // Set the ID of the feature
       this.vectorSource.addFeature(feature);
     });
   }
@@ -141,16 +162,13 @@ export class MapComponent implements OnInit {
         coordinates,
         type: geometry.getType() as 'Polygon' | 'LineString'
       };
-  
-      // Log data before sending to backend
-      console.log('Sending drawing to backend:', drawing);
-  
+
       this.drawingService.createDrawing(drawing).subscribe(
         (response: any) => {
-          console.log('Drawing saved:', response);
+          feature.setId(Number(response.id)); // Ensure the ID is treated as a number
         },
         (error: any) => {
-          console.error('Error saving drawing:', error);
+          console.error('Error while saving drawing:', error);
         }
       );
     } else {
@@ -169,17 +187,14 @@ export class MapComponent implements OnInit {
           type: geometry.getType() as 'Polygon' | 'LineString'
         };
 
-        console.log('Saving modified drawing to backend:', drawing);
-  
         const featureId = feature.getId();
-        if (typeof featureId === 'number') {
-          this.drawingService.saveDrawing(featureId, drawing).subscribe(
+        if (featureId && typeof featureId === 'number') { // Ensure featureId is a number
+          this.drawingService.saveDrawing(Number(featureId), drawing).subscribe(
             (response: any) => {
-              console.log('Modified drawing saved:', response);
-              feature.set('modified', false); 
+              feature.set('modified', false);
             },
             (error: any) => {
-              console.error('Error saving modified drawing:', error);
+              console.error('Error while saving modified drawing:', error);
             }
           );
         } else {
@@ -188,7 +203,8 @@ export class MapComponent implements OnInit {
       }
     });
     this.modificationPending = false;
-    this.isSaveButtonVisible = false; // Save button gizleme işlemi
+    this.isSaveButtonVisible = false;
+    this.isCancelButtonVisible = false;
   }
 
   addPolygon() {
@@ -198,13 +214,13 @@ export class MapComponent implements OnInit {
       type: 'Polygon',
     });
     this.map.addInteraction(this.drawInteraction);
-  
+
     this.drawInteraction.on('drawend', (event) => {
       const feature = event.feature;
       this.saveDrawing(feature);
     });
   }
-  
+
   addLineString() {
     this.map.removeInteraction(this.drawInteraction);
     this.drawInteraction = new Draw({
@@ -212,7 +228,7 @@ export class MapComponent implements OnInit {
       type: 'LineString',
     });
     this.map.addInteraction(this.drawInteraction);
-  
+
     this.drawInteraction.on('drawend', (event) => {
       const feature = event.feature;
       this.saveDrawing(feature);
@@ -232,5 +248,23 @@ export class MapComponent implements OnInit {
 
   saveChanges() {
     this.saveModifications();
+  }
+
+  undoChanges() {
+    const modifiedFeatures = this.vectorSource.getFeatures().filter(feature => feature.get('modified'));
+    modifiedFeatures.forEach(feature => {
+      const geometry = feature.getGeometry();
+      if (geometry && this.originalCoordinates) {
+        if (geometry instanceof Polygon) {
+          geometry.setCoordinates(this.originalCoordinates as number[][][]);
+        } else if (geometry instanceof LineString) {
+          geometry.setCoordinates(this.originalCoordinates as number[][]);
+        }
+        feature.set('modified', false);
+      }
+    });
+    this.modificationPending = false;
+    this.isSaveButtonVisible = false;
+    this.isCancelButtonVisible = false;
   }
 }

@@ -25,7 +25,7 @@ export class EditDrawingComponent implements OnInit {
     this.isAdmin = this.authService.isAdmin();
 
     if (id) {
-      this.drawingService.getDrawing(+id).subscribe(data => {
+      this.drawingService.getDrawing(Number(id)).subscribe(data => {
         this.drawing = data;
       });
     } else {

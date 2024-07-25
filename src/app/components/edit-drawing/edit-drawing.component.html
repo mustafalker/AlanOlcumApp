@@ -1,18 +1,30 @@
 <div *ngIf="drawing" class="container mt-4">
   <div class="card">
     <div class="card-header">
-      <h2>Edit Drawing</h2>
+      <h2>Çizimi Düzenle</h2>
     </div>
     <div class="card-body">
       <div class="mb-3">
-        <label for="type" class="form-label">Type:</label>
+        <label for="type" class="form-label">Tür:</label>
         <input id="type" [(ngModel)]="drawing.type" class="form-control">
       </div>
       <div class="mb-3">
-        <label for="measurement" class="form-label">Coordinates:</label>
-        <input id="measurement" [(ngModel)]="drawing.coordinates" class="form-control measurement">
+        <label for="coordinates" class="form-label">Koordinatlar:</label>
+        <input id="coordinates" [(ngModel)]="drawing.coordinates" class="form-control">
       </div>
-      <button (click)="saveDrawing()" class="btn btn-primary" [disabled]="!isAdmin">Save</button>
+      <div class="mb-3">
+        <label for="measurement" class="form-label">Ölçü:</label>
+        <input id="measurement" [(ngModel)]="drawing.measurement" class="form-control" disabled>
+      </div>
+      <div class="mb-3">
+        <label for="username" class="form-label">Çizen Kişi:</label>
+        <input id="username" [(ngModel)]="drawing.username" class="form-control" disabled>
+      </div>
+      <div class="mb-3">
+        <label for="createdAt" class="form-label">Eklenme Zamanı:</label>
+        <input id="createdAt" [(ngModel)]="drawing.createdAt" class="form-control" disabled>
+      </div>
+      <button (click)="saveDrawing()" class="btn btn-primary" [disabled]="!isAdmin">Kaydet</button>
     </div>
   </div>
 </div>

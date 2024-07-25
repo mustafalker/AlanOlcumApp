@@ -15,7 +15,7 @@ export class DrawingListComponent implements OnInit {
   constructor(
     private drawingService: DrawingService,
     private authService: AuthService,
-    private router: Router // Router'ı ekleyin
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -24,9 +24,14 @@ export class DrawingListComponent implements OnInit {
   }
 
   loadDrawings(): void {
-    this.drawingService.getDrawings().subscribe((data: any[]) => {
-      this.drawings = data;
-    });
+    this.drawingService.getDrawings().subscribe(
+      (data: any[]) => {
+        this.drawings = data;
+      },
+      error => {
+        console.error('Error fetching drawings:', error);
+      }
+    );
   }
 
   editDrawing(id: number): void {
@@ -36,8 +41,13 @@ export class DrawingListComponent implements OnInit {
   }
 
   deleteDrawing(id: number): void {
-    this.drawingService.deleteDrawing(id).subscribe(() => {
-      this.drawings = this.drawings.filter(drawing => drawing.id !== id);
-    });
+    this.drawingService.deleteDrawing(id).subscribe(
+      () => {
+        this.drawings = this.drawings.filter(drawing => drawing.id !== id);
+      },
+      error => {
+        console.error('Error deleting drawing:', error);
+      }
+    );
   }
 }
